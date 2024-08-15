@@ -1,5 +1,5 @@
 {
-	"name": "LookUpAndJoins",
+	"name": "LookUpJoinsSurrogateKey",
 	"properties": {
 		"folder": {
 			"name": "Testing"
@@ -58,6 +58,15 @@
 				},
 				{
 					"name": "LOuterJoin"
+				},
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "select2"
 				}
 			],
 			"scriptLines": [
@@ -106,7 +115,34 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> LOuterJoin",
-				"lookup sink(allowSchemaDrift: true,",
+				"select1 keyGenerate(output(sno as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"lookup select(mapColumn(",
+				"          EMP_ID,",
+				"          EMP_NAME,",
+				"          GENDER,",
+				"          DOJ,",
+				"          SALARY,",
+				"          DEPT_ID = EmpData@DEPT_ID,",
+				"          DEPT_ID = DeptData@DEPT_ID,",
+				"          DEPT_NAME",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"surrogateKey1 select(mapColumn(",
+				"          sno,",
+				"          EMP_ID,",
+				"          EMP_NAME,",
+				"          GENDER,",
+				"          DOJ,",
+				"          SALARY,",
+				"          DEPT_ID,",
+				"          DEPT_NAME",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     skipDuplicateMapInputs: true,",
