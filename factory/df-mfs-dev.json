@@ -1,0 +1,9 @@
+{
+	"name": "df-mfs-dev",
+	"location": "centralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "6c47f50f-e6bd-492c-9bb2-07542285218a",
+		"tenantId": "0320f3ce-af6b-4b19-80da-d948d9d67a09"
+	}
+}

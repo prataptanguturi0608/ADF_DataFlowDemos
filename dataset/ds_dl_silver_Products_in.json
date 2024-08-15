@@ -1,0 +1,49 @@
+{
+	"name": "ds_dl_silver_Products_in",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_myFirstProj_DLake_output",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ADE Classes/myFirstProject"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "customerorders/products",
+				"fileSystem": "silver"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "PRODUCT_NAME",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_ID",
+				"type": "INT32"
+			},
+			{
+				"name": "UNIT_PRICE",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "Ingestion_by",
+				"type": "UTF8"
+			},
+			{
+				"name": "Ingestion_TimeStamp",
+				"type": "UTF8"
+			},
+			{
+				"name": "Ingestion_Date",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

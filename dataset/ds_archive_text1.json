@@ -1,0 +1,30 @@
+{
+	"name": "ds_archive_text1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_mfp_blod_archive",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ADE Classes/myFirstProject"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": {
+					"value": "@formatDateTime(utcNow(),'yyyy-MM-dd')",
+					"type": "Expression"
+				},
+				"container": "archive"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
