@@ -1,0 +1,53 @@
+{
+	"name": "ds_mfp_Blob_landing_Parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_myFirstProject_BlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_Filename": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "ADE Classes/myFirstProject"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().p_Filename",
+					"type": "Expression"
+				},
+				"container": "landing"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ORDER_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "ORDER_DATETIME",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUSTOMER_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "ORDER_STATUS",
+				"type": "UTF8"
+			},
+			{
+				"name": "STORE_ID",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

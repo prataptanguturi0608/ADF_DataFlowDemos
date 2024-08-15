@@ -1,0 +1,21 @@
+{
+	"name": "ds_mfp_blobFolder",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_myFirstProject_BlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ADE Classes/myFirstProject"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "landing"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
