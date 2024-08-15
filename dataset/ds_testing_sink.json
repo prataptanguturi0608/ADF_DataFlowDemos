@@ -5,6 +5,9 @@
 			"referenceName": "ls_blob_testing",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "Test"
+		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
