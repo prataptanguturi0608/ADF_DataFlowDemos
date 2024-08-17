@@ -1,5 +1,5 @@
 {
-	"name": "AggregateTransfermation-old",
+	"name": "AggregateTransfermation",
 	"properties": {
 		"folder": {
 			"name": "DataflowTransfermations"
@@ -15,7 +15,15 @@
 					"name": "source1"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_sink",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "aggregate1"
@@ -35,7 +43,12 @@
 				"     ignoreNoFilesFound: false) ~> source1",
 				"source1 aggregate(groupBy(DEPT_ID,",
 				"          GENDER),",
-				"     EmployeeCount = count(EMP_ID)) ~> aggregate1"
+				"     EmployeeCount = count(EMP_ID)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}

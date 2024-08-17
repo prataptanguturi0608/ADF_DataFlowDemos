@@ -22,7 +22,22 @@
 					"name": "DeptData"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_sink",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_testing_sink",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
 			"transformations": [
 				{
 					"name": "existsTran"
@@ -55,7 +70,17 @@
 				"     broadcast: 'auto')~> existsTran",
 				"EmpData, DeptData exists(EmpData@DEPT_ID == DeptData@DEPT_ID,",
 				"     negate:true,",
-				"     broadcast: 'auto')~> DoesntExistTran"
+				"     broadcast: 'auto')~> DoesntExistTran",
+				"DoesntExistTran sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1",
+				"existsTran sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink2"
 			]
 		}
 	}
