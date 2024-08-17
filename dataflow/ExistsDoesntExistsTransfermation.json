@@ -1,0 +1,62 @@
+{
+	"name": "ExistsDoesntExistsTransfermation",
+	"properties": {
+		"folder": {
+			"name": "Testing"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_EmpData",
+						"type": "DatasetReference"
+					},
+					"name": "EmpData"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_testing_DeptData",
+						"type": "DatasetReference"
+					},
+					"name": "DeptData"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "existsTran"
+				},
+				{
+					"name": "DoesntExistTran"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMP_ID as string,",
+				"          EMP_NAME as string,",
+				"          GENDER as string,",
+				"          DOJ as string,",
+				"          SALARY as string,",
+				"          DEPT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> EmpData",
+				"source(output(",
+				"          DEPT_ID as string,",
+				"          DEPT_NAME as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DeptData",
+				"EmpData, DeptData exists(EmpData@DEPT_ID == DeptData@DEPT_ID,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> existsTran",
+				"EmpData, DeptData exists(EmpData@DEPT_ID == DeptData@DEPT_ID,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> DoesntExistTran"
+			]
+		}
+	}
+}
