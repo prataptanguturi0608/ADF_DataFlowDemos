@@ -2,7 +2,7 @@
 	"name": "Window",
 	"properties": {
 		"folder": {
-			"name": "Testing"
+			"name": "DataflowTransfermations"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {

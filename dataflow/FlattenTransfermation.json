@@ -2,7 +2,7 @@
 	"name": "FlattenTransfermation",
 	"properties": {
 		"folder": {
-			"name": "Testing"
+			"name": "DataflowTransfermations"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {

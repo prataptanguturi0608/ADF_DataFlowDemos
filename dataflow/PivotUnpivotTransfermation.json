@@ -1,5 +1,5 @@
 {
-	"name": "ExistsDoesntExistsTransfermation",
+	"name": "PivotUnpivotTransfermation",
 	"properties": {
 		"folder": {
 			"name": "DataflowTransfermations"
@@ -19,16 +19,19 @@
 						"referenceName": "ds_testing_DeptData",
 						"type": "DatasetReference"
 					},
-					"name": "DeptData"
+					"name": "DeptDept"
 				}
 			],
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "existsTran"
+					"name": "pivot1"
 				},
 				{
-					"name": "DoesntExistTran"
+					"name": "join1"
+				},
+				{
+					"name": "unpivot1"
 				}
 			],
 			"scriptLines": [
@@ -49,13 +52,23 @@
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> DeptData",
-				"EmpData, DeptData exists(EmpData@DEPT_ID == DeptData@DEPT_ID,",
-				"     negate:false,",
-				"     broadcast: 'auto')~> existsTran",
-				"EmpData, DeptData exists(EmpData@DEPT_ID == DeptData@DEPT_ID,",
-				"     negate:true,",
-				"     broadcast: 'auto')~> DoesntExistTran"
+				"     ignoreNoFilesFound: false) ~> DeptDept",
+				"join1 pivot(groupBy(EmpData@DEPT_ID),",
+				"     pivotBy(GENDER),",
+				"     {} = count(EMP_ID),",
+				"     columnNaming: '$N$V',",
+				"     lateral: true) ~> pivot1",
+				"EmpData, DeptDept join(EmpData@DEPT_ID == DeptDept@DEPT_ID,",
+				"     joinType:'outer',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"pivot1 unpivot(output(",
+				"          Gender as string",
+				"     ),",
+				"     ungroupBy(DEPT_ID),",
+				"     lateral: true,",
+				"     ignoreNullPivots: false) ~> unpivot1"
 			]
 		}
 	}

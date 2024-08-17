@@ -2,7 +2,7 @@
 	"name": "UnionTransfermation",
 	"properties": {
 		"folder": {
-			"name": "Testing"
+			"name": "DataflowTransfermations"
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
