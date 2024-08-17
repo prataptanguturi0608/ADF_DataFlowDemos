@@ -26,10 +26,10 @@
 			],
 			"transformations": [
 				{
-					"name": "parse2"
+					"name": "ContactinfoParse"
 				},
 				{
-					"name": "parse3"
+					"name": "SkillsParse"
 				}
 			],
 			"scriptLines": [
@@ -49,15 +49,15 @@
 				"source1 parse(parseAddress = Contact ? (MobileNO as string,",
 				"          Address as string),",
 				"     format: 'json',",
-				"     documentForm: 'singleDocument') ~> parse2",
-				"parse2 parse(Skills = Skills ? (Skill1 as string,",
+				"     documentForm: 'singleDocument') ~> ContactinfoParse",
+				"ContactinfoParse parse(Skills = Skills ? (Skill1 as string,",
 				"          Skill2 as string,",
 				"          Skill3 as string),",
 				"     format: 'delimited',",
 				"     columnNamesAsHeader: false,",
 				"     columnDelimiter: ',',",
-				"     nullValue: '') ~> parse3",
-				"parse3 sink(allowSchemaDrift: true,",
+				"     nullValue: '') ~> SkillsParse",
+				"SkillsParse sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     skipDuplicateMapInputs: true,",
