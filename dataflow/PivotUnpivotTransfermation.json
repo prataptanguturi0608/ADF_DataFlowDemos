@@ -22,7 +22,15 @@
 					"name": "DeptDept"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_sink",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "pivot1"
@@ -69,7 +77,12 @@
 				"     ),",
 				"     ungroupBy(DEPT_ID),",
 				"     lateral: true,",
-				"     ignoreNullPivots: false) ~> unpivot1"
+				"     ignoreNullPivots: false) ~> unpivot1",
+				"unpivot1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
 			]
 		}
 	}
