@@ -40,6 +40,17 @@
 					"items": {
 						"type": "string"
 					}
+				},
+				"Contact": {
+					"type": "object",
+					"properties": {
+						"Mobile": {
+							"type": "string"
+						},
+						"Address": {
+							"type": "string"
+						}
+					}
 				}
 			}
 		}
