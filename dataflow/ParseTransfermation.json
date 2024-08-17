@@ -8,6 +8,10 @@
 		"typeProperties": {
 			"sources": [
 				{
+					"dataset": {
+						"referenceName": "ds_testing_EmpSkillData_txt",
+						"type": "DatasetReference"
+					},
 					"name": "source1"
 				}
 			],
@@ -23,14 +27,37 @@
 			"transformations": [
 				{
 					"name": "parse1"
+				},
+				{
+					"name": "parse2"
 				}
 			],
 			"scriptLines": [
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source1",
-				"source1 parse(format: 'json',",
-				"     documentForm: 'documentPerLine') ~> parse1",
-				"parse1 sink(allowSchemaDrift: true,",
+				"source(output(",
+				"          EMP_ID as string,",
+				"          EMP_NAME as string,",
+				"          GENDER as string,",
+				"          DOJ as string,",
+				"          SALARY as string,",
+				"          DEPT_ID as string,",
+				"          Skills as string,",
+				"          Contact as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 parse(ParseSkills = Skills ? (Skill1 as string,",
+				"          Skill2 as string,",
+				"          Skill3 as string),",
+				"     format: 'delimited',",
+				"     columnNamesAsHeader: false,",
+				"     columnDelimiter: ',',",
+				"     nullValue: '') ~> parse1",
+				"parse1 parse(parseAddress = Contact ? (MobileNO as string,",
+				"          Address as string),",
+				"     format: 'json',",
+				"     documentForm: 'documentPerLine') ~> parse2",
+				"parse2 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     skipDuplicateMapInputs: true,",
