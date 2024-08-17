@@ -1,0 +1,51 @@
+{
+	"name": "FlattenTransfermation",
+	"properties": {
+		"folder": {
+			"name": "Testing"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_EmpSkillData",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "flatten1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          user_id as string,",
+				"          email as string,",
+				"          name as string,",
+				"          given_name as string,",
+				"          family_name as string,",
+				"          Skills as string[]",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> source1",
+				"source1 foldDown(unroll(Skills),",
+				"     mapColumn(",
+				"          user_id,",
+				"          email,",
+				"          name,",
+				"          given_name,",
+				"          family_name,",
+				"          Skills",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1"
+			]
+		}
+	}
+}
