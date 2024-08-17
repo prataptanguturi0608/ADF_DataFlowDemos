@@ -9,7 +9,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ds_testing_EmpData",
+						"referenceName": "ds_testing_EmpSkillData",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -23,16 +23,17 @@
 			],
 			"scriptLines": [
 				"source(output(",
-				"          EMP_ID as string,",
-				"          EMP_NAME as string,",
-				"          GENDER as string,",
-				"          DOJ as string,",
-				"          SALARY as string,",
-				"          DEPT_ID as string",
+				"          user_id as string,",
+				"          email as string,",
+				"          name as string,",
+				"          given_name as string,",
+				"          family_name as string,",
+				"          Skills as string[]",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source1",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'arrayOfDocuments') ~> source1",
 				"source1 stringify(EMP_ID = ERROR_FUNCTION('') ? string,",
 				"     format: 'json') ~> stringify1"
 			]
