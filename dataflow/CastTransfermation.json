@@ -1,5 +1,5 @@
 {
-	"name": "dataflow1",
+	"name": "CastTransfermation",
 	"properties": {
 		"folder": {
 			"name": "DataflowTransfermations"
@@ -19,9 +19,6 @@
 			"transformations": [
 				{
 					"name": "cast1"
-				},
-				{
-					"name": "derivedColumn1"
 				}
 			],
 			"scriptLines": [
@@ -36,11 +33,10 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1",
-				"derivedColumn1 cast(output(",
-				"          DOJ as date 'MM-dd-yyyy'",
+				"source1 cast(output(",
+				"          DOJ as date 'yyyy-MM-dd'",
 				"     ),",
-				"     errors: true) ~> cast1",
-				"source1 derive(DateOJ = toDate(DOJ, 'yyyy-MM-dd')) ~> derivedColumn1"
+				"     errors: true) ~> cast1"
 			]
 		}
 	}
