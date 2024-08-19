@@ -1,5 +1,5 @@
 {
-	"name": "AssertTransfermation",
+	"name": "ExistsDoesntExistsTransfermation",
 	"properties": {
 		"folder": {
 			"name": "DataflowTransfermations"
@@ -25,14 +25,14 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "ds_testing_EmpData",
+						"referenceName": "ds_testing_sink",
 						"type": "DatasetReference"
 					},
 					"name": "sink1"
 				},
 				{
 					"dataset": {
-						"referenceName": "ds_testing_DeptData",
+						"referenceName": "ds_testing_sink",
 						"type": "DatasetReference"
 					},
 					"name": "sink2"
@@ -40,10 +40,10 @@
 			],
 			"transformations": [
 				{
-					"name": "assert"
+					"name": "existsTran"
 				},
 				{
-					"name": "errorsfilter"
+					"name": "DoesntExistTran"
 				}
 			],
 			"scriptLines": [
@@ -59,45 +59,28 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> EmpData",
 				"source(output(",
-				"          EMP_ID as string,",
-				"          EMP_NAME as string,",
-				"          GENDER as string,",
-				"          DOJ as string,",
-				"          SALARY as string,",
-				"          DEPT_ID as string",
+				"          DEPT_ID as string,",
+				"          DEPT_NAME as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> DeptData",
-				"EmpData, DeptData assert(expectTrue(!isNull(toDate(EmpData@DOJ, 'yyyyMMdd')), false, 'DOJCheckassert'),",
-				"     expectUnique(EmpData@EMP_ID, false, 'UniqueCheckAssert'),",
-				"     expectExists(EmpData@DEPT_ID == DeptData@DEPT_ID, false, 'assert3')) ~> assert",
-				"assert filter(isError()) ~> errorsfilter",
-				"errorsfilter sink(allowSchemaDrift: true,",
+				"EmpData, DeptData exists(EmpData@DEPT_ID == DeptData@DEPT_ID,",
+				"     negate:false,",
+				"     broadcast: 'auto')~> existsTran",
+				"EmpData, DeptData exists(EmpData@DEPT_ID == DeptData@DEPT_ID,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> DoesntExistTran",
+				"DoesntExistTran sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          EMP_ID as string,",
-				"          EMP_NAME as string,",
-				"          GENDER as string,",
-				"          DOJ as string,",
-				"          SALARY as string,",
-				"          DEPT_ID as string",
-				"     ),",
+				"     format: 'parquet',",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     preCommands: [],",
-				"     postCommands: []) ~> sink1",
-				"DeptData sink(allowSchemaDrift: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1",
+				"existsTran sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          DEPT_ID as string,",
-				"          DEPT_NAME as string",
-				"     ),",
+				"     format: 'parquet',",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     preCommands: [],",
-				"     postCommands: [],",
-				"     format: 'parquet') ~> sink2"
+				"     skipDuplicateMapOutputs: true) ~> sink2"
 			]
 		}
 	}

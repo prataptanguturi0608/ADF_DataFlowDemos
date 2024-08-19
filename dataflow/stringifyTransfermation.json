@@ -1,0 +1,60 @@
+{
+	"name": "stringifyTransfermation",
+	"properties": {
+		"folder": {
+			"name": "DataflowTransfermations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_EmpSkillData",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_sink",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "stringify1"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          user_id as string,",
+				"          email as string,",
+				"          name as string,",
+				"          given_name as string,",
+				"          family_name as string,",
+				"          Skills as string[],",
+				"          Contact as (Mobile as string, Address as string)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'arrayOfDocuments') ~> source1",
+				"source1 stringify(ContactStringify = Contact ? string,",
+				"     format: 'json') ~> stringify1",
+				"stringify1 derive(ContactStringify = toString(ContactStringify)) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

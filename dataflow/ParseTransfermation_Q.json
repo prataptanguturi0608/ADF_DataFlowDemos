@@ -1,0 +1,68 @@
+{
+	"name": "ParseTransfermation_Q",
+	"properties": {
+		"folder": {
+			"name": "DataflowTransfermations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_EmpSkillData_txt",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_sink",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ContactinfoParse"
+				},
+				{
+					"name": "SkillsParse"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMP_ID as string,",
+				"          EMP_NAME as string,",
+				"          GENDER as string,",
+				"          DOJ as string,",
+				"          SALARY as string,",
+				"          DEPT_ID as string,",
+				"          Skills as string,",
+				"          Contact as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 parse(parseAddress = Contact ? (MobileNO as string,",
+				"          Address as string),",
+				"     format: 'json',",
+				"     documentForm: 'singleDocument') ~> ContactinfoParse",
+				"ContactinfoParse parse(Skills = Skills ? (Skill1 as string,",
+				"          Skill2 as string,",
+				"          Skill3 as string),",
+				"     format: 'delimited',",
+				"     columnNamesAsHeader: false,",
+				"     columnDelimiter: ',',",
+				"     nullValue: '') ~> SkillsParse",
+				"SkillsParse sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

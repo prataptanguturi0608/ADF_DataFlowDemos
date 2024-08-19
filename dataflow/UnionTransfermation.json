@@ -1,0 +1,63 @@
+{
+	"name": "UnionTransfermation",
+	"properties": {
+		"folder": {
+			"name": "DataflowTransfermations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_DeptData",
+						"type": "DatasetReference"
+					},
+					"name": "Dept1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_testing_DeptData_2",
+						"type": "DatasetReference"
+					},
+					"name": "Dept2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_sink",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          DEPT_ID as string,",
+				"          DEPT_NAME as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Dept1",
+				"source(output(",
+				"          DEPT_ID as string,",
+				"          DEPT_NAME as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Dept2",
+				"Dept1, Dept2 union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

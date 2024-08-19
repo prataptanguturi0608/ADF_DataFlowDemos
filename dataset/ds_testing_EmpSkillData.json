@@ -1,0 +1,58 @@
+{
+	"name": "ds_testing_EmpSkillData",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_blob_testing",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Test"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "sample_users_with_id.json",
+				"container": "test"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"user_id": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"given_name": {
+					"type": "string"
+				},
+				"family_name": {
+					"type": "string"
+				},
+				"Skills": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"Contact": {
+					"type": "object",
+					"properties": {
+						"Mobile": {
+							"type": "string"
+						},
+						"Address": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	}
+}

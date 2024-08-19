@@ -1,5 +1,5 @@
 {
-	"name": "ds_testing_sink",
+	"name": "ds_testing_DeptData_2",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_blob_testing",
@@ -9,15 +9,28 @@
 			"name": "Test"
 		},
 		"annotations": [],
-		"type": "Parquet",
+		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
+				"fileName": "DepartmentData2.txt",
 				"container": "test"
 			},
-			"compressionCodec": "snappy"
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "DEPT_ID",
+				"type": "String"
+			},
+			{
+				"name": "DEPT_NAME",
+				"type": "String"
+			}
+		]
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
 }

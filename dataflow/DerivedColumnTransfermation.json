@@ -1,0 +1,75 @@
+{
+	"name": "DerivedColumnTransfermation",
+	"properties": {
+		"folder": {
+			"name": "DataflowTransfermations"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_EmpData",
+						"type": "DatasetReference"
+					},
+					"name": "Empsource1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_testing_DeptData",
+						"type": "DatasetReference"
+					},
+					"name": "Depsource1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_testing_sink",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "LOuterJoin"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMP_ID as string,",
+				"          EMP_NAME as string,",
+				"          GENDER as string,",
+				"          DOJ as string,",
+				"          SALARY as string,",
+				"          DEPT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Empsource1",
+				"source(output(",
+				"          DEPT_ID as string,",
+				"          DEPT_NAME as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Depsource1",
+				"Empsource1, Depsource1 join(Empsource1@DEPT_ID == Depsource1@DEPT_ID,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> LOuterJoin",
+				"LOuterJoin derive(GENDER = iif(GENDER=='M', 'MALE', 'FEMALE')) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink2"
+			]
+		}
+	}
+}
