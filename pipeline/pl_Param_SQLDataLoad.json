@@ -1,0 +1,352 @@
+{
+	"name": "pl_Param_SQLDataLoad",
+	"properties": {
+		"description": "In Progress:\nEliminate duplicates in data loading\nDone:\nThis pipeline load data from excel file to azure SQL database. with parameterize mapping.",
+		"activities": [
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Filter1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Filter1').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Get InputFile Name",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "v_input_filename",
+								"value": {
+									"value": "@item().name",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Input File Validation",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Get InputFile Name",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "\nSELECT CASE WHEN EXISTS (SELECT 1 FROM [dbo].[tbl_mappingData] WHERE file_name = '@{variables('v_input_filename')}')\n            THEN CAST(1 AS BIT)\n            ELSE CAST(0 AS BIT)\n       END AS IsFileValid;",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "ds_AzureSqlTable_mapping",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "FileValidation",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@contains(variables('v_FileValid'), 'true}')",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "False Wait",
+										"type": "Wait",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"waitTimeInSeconds": 1
+										}
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Copy_FilesToSQL",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Lookup_MappingData",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "ExcelSource",
+												"storeSettings": {
+													"type": "AzureBlobStorageReadSettings",
+													"recursive": true,
+													"enablePartitionDiscovery": false
+												}
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"writeBehavior": "upsert",
+												"upsertSettings": {
+													"useTempDB": true,
+													"keys": {
+														"value": "@variables('v_list_keyColumns')",
+														"type": "Expression"
+													}
+												},
+												"sqlWriterUseTableLock": false,
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"value": "@json(activity('Lookup_MappingData').output.firstRow.MappingScript)",
+												"type": "Expression"
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "ds_testing_empdept",
+												"type": "DatasetReference",
+												"parameters": {
+													"p_Fileaname": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "ds_azure_custdepttable",
+												"type": "DatasetReference",
+												"parameters": {
+													"schema": {
+														"value": "@activity('Lookup_MappingData').output.firstRow.table_Schema",
+														"type": "Expression"
+													},
+													"table": {
+														"value": "@activity('Lookup_MappingData').output.firstRow.Table_Name",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "Lookup_MappingData",
+										"type": "Lookup",
+										"dependsOn": [
+											{
+												"activity": "SetKeyColumn1",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"sqlReaderQuery": {
+													"value": "select * from [dbo].[tbl_mappingData] Where file_name = '@{variables('v_input_filename')}'\n                ",
+													"type": "Expression"
+												},
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"dataset": {
+												"referenceName": "ds_AzureSqlTable_mapping",
+												"type": "DatasetReference"
+											}
+										}
+									},
+									{
+										"name": "SetKeyColumn1",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"policy": {
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "v_list_keyColumns",
+											"value": {
+												"value": "@array(if(equals(variables('v_input_filename'),'employee.xlsx'),'empID','DepID'))",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "FileValidation",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Input File Validation",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "v_FileValid",
+								"value": {
+									"value": "@split(string(activity('Input File Validation').output.firstRow),':')[1]",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ds_testing",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Filter1",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata1').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@endswith(item().name, 'xlsx')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"v_filename": {
+				"type": "String"
+			},
+			"Mappingqry": {
+				"type": "String"
+			},
+			"list_files": {
+				"type": "Array"
+			},
+			"list_filesnames": {
+				"type": "Array"
+			},
+			"v_input_filename": {
+				"type": "String"
+			},
+			"v_FileValid": {
+				"type": "String"
+			},
+			"v_KeyColumn": {
+				"type": "String"
+			},
+			"v_list_keyColumns": {
+				"type": "Array"
+			}
+		},
+		"folder": {
+			"name": "UseCases"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-08-29T16:33:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

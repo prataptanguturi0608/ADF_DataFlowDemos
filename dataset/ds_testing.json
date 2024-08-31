@@ -1,14 +1,9 @@
 {
-	"name": "ds_testing_EmpData",
+	"name": "ds_testing",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_blob_testing",
 			"type": "LinkedServiceReference"
-		},
-		"parameters": {
-			"pfilename": {
-				"type": "string"
-			}
 		},
 		"folder": {
 			"name": "Test"
@@ -18,8 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "EmployeeData.txt",
-				"container": "test"
+				"container": "test2"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",

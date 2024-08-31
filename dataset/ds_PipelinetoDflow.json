@@ -1,25 +1,25 @@
 {
-	"name": "ds_testing_EmpData",
+	"name": "ds_PipelinetoDflow",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_blob_testing",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"pfilename": {
+			"p_filename": {
 				"type": "string"
 			}
-		},
-		"folder": {
-			"name": "Test"
 		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "EmployeeData.txt",
-				"container": "test"
+				"fileName": {
+					"value": "@dataset().p_filename",
+					"type": "Expression"
+				},
+				"container": "test2"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",

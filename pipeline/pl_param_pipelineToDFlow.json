@@ -1,0 +1,74 @@
+{
+	"name": "pl_param_pipelineToDFlow",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "v_input_filename",
+					"value": {
+						"value": "EmployeeData.txt",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "df_pipelineToDFlow",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_PipelinetoDflow",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"source1": {
+								"p_filename": {
+									"value": "@variables('v_input_filename')",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"variables": {
+			"v_input_filename": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "UseCases"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-08-29T16:33:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

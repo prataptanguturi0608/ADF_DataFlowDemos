@@ -1,27 +1,16 @@
 {
-	"name": "ds_testing_DeptData",
+	"name": "ds_pipelineToDflowTarget",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_blob_testing",
 			"type": "LinkedServiceReference"
-		},
-		"parameters": {
-			"pfilename": {
-				"type": "string"
-			}
-		},
-		"folder": {
-			"name": "Test"
 		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": {
-					"value": "@dataset().pfilename",
-					"type": "Expression"
-				},
+				"folderPath": "Output",
 				"container": "test2"
 			},
 			"columnDelimiter": ",",
@@ -29,16 +18,7 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": [
-			{
-				"name": "DEPT_ID",
-				"type": "String"
-			},
-			{
-				"name": "DEPT_NAME",
-				"type": "String"
-			}
-		]
+		"schema": []
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
 }

@@ -1,0 +1,37 @@
+{
+	"name": "ds_AzureSqlTable_mapping",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_testing_sqldb",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Test"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "file_name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "table_Schema",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Table_Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MappingScript",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tbl_mappingData"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
