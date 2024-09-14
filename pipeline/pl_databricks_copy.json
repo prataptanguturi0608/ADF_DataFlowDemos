@@ -1,0 +1,97 @@
+{
+	"name": "pl_databricks_copy",
+	"properties": {
+		"activities": [
+			{
+				"name": "Notebook1",
+				"type": "DatabricksNotebook",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Shared/SampleProject01/SimpleCopyActivity/CopydatafromblobtoSQL"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_databricks_copyNB",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "v_filename",
+					"value": {
+						"value": "/mnt/blobtest2mount/DepartmentData.txt",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Notebook2",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Shared/SampleProject01/SimpleCopyActivity/sample_notebook",
+					"baseParameters": {
+						"FileName": {
+							"value": "@variables('v_filename')",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_databricks_copyNB",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"variables": {
+			"v_filename": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "ADE Classes"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-08-29T16:32:35Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

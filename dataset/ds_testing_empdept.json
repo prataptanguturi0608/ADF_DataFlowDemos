@@ -1,12 +1,12 @@
 {
-	"name": "ds_testing_EmpData",
+	"name": "ds_testing_empdept",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "ls_blob_testing",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"pfilename": {
+			"p_Fileaname": {
 				"type": "string"
 			}
 		},
@@ -14,41 +14,33 @@
 			"name": "Test"
 		},
 		"annotations": [],
-		"type": "DelimitedText",
+		"type": "Excel",
 		"typeProperties": {
+			"sheetName": {
+				"value": "sheet1",
+				"type": "Expression"
+			},
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "EmployeeData.txt",
-				"container": "test"
+				"fileName": {
+					"value": "@dataset().p_Fileaname",
+					"type": "Expression"
+				},
+				"container": "test2"
 			},
-			"columnDelimiter": ",",
-			"escapeChar": "\\",
-			"firstRowAsHeader": true,
-			"quoteChar": "\""
+			"firstRowAsHeader": true
 		},
 		"schema": [
 			{
-				"name": "EMP_ID",
 				"type": "String"
 			},
 			{
-				"name": "EMP_NAME",
 				"type": "String"
 			},
 			{
-				"name": "GENDER",
 				"type": "String"
 			},
 			{
-				"name": "DOJ",
-				"type": "String"
-			},
-			{
-				"name": "SALARY",
-				"type": "String"
-			},
-			{
-				"name": "DEPT_ID",
 				"type": "String"
 			}
 		]

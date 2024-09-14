@@ -1,0 +1,30 @@
+{
+	"name": "ds_tbl_emp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_testing_sqldb",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "empName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Age",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tbl_emp"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
